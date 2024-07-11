@@ -15,6 +15,12 @@ public class Mp3Song : ISong
     public byte[] decodeSong(FileStream songFile){
         byte[] Mp3Bytes = new byte[songFile.Length];
         songFile.Read(Mp3Bytes);
+        songFile.Close();
+        // parsing and decoding the MP3 file - start with reading up on the file formats
+        // MP3 File consists of MP3 Frames 
+        // Header and data. Header is always 4 bytes and contains important meta data 
+        
+
         return Mp3Bytes;
     }
 
