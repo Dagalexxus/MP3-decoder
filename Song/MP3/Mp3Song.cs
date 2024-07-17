@@ -24,6 +24,10 @@ public class Mp3Song : ISong
         return Mp3Bytes;
     }
 
+    public byte[] getSongInfo(){
+        return decodeSong(_song);
+    }
+
     public override string ToString(){
         return name;
     }
