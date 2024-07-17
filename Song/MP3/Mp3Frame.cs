@@ -21,4 +21,9 @@ public class Mp3Frame{
         this.modeExtension = "";
         this.emphasis = "";
     }
+
+    public override string ToString()
+    {
+        return $"MPEG Version: {MpegVersion}, Layer Version: {layer}, Protection: {prot}";
+    }
 }

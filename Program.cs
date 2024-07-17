@@ -71,6 +71,34 @@ class Program
                     Console.WriteLine("Error detected.");
                 }
 
+                // check for the layer as the next two bits are layer
+                // shift the bits to the right and compare to ??????11
+                int shifted = (by[index] >> 1) & 0x03;
+                switch (shifted){
+                    case 0b00:
+                        currentFrame.layer = "Reserved";
+                        break;
+                    case 0b01:
+                        currentFrame.layer = "Layer 3";
+                        break;
+                    case 0b10:
+                        currentFrame.layer = "Layer 2";
+                        break;
+                    case 0b11:
+                        currentFrame.layer = "Layer 1";
+                        break;
+                }
+
+                // check for the protection bit
+                if ((by[index] & 0x01) == 0x01){
+                    currentFrame.prot = true;
+                }
+                else{
+                    currentFrame.prot = false;
+                }
+
+                
+
                 mp3Frames.Add(currentFrame);
             }
             else 
@@ -97,5 +125,8 @@ class Program
         for (int idx = 0; idx < 4; idx++){
             Console.WriteLine($"Version: {keys[idx]} has {vals[idx]} occurences");
         }
+
+        Console.WriteLine(mp3Frames[0].ToString());
+        Console.WriteLine(by[1]);
     }
 }

@@ -8,4 +8,99 @@ abstract class Utils
         {0xF0, "MPEG Version 2"},
         {0xF8, "MPEG Version 1"}
     };
+
+    public static int[] version1Layer1 = {
+        1,
+        32,
+        64,
+        96,
+        128,
+        160,
+        192,
+        224,
+        256,
+        288,
+        320,
+        352,
+        384,
+        416,
+        448,
+        -1
+    };
+
+    public static int[] version1Layer2 = {
+        1,
+        32,
+        48,
+        56,
+        64,
+        80,
+        96,
+        112,
+        128,
+        160,
+        192,
+        224,
+        256,
+        320,
+        384,
+        -1
+    };
+
+    public static int[] version1Layer3 = {
+        1,
+        32,
+        40,
+        48,
+        56,
+        64,
+        80,
+        96,
+        112,
+        128,
+        160,
+        192,
+        224,
+        256,
+        320,
+        -1
+    };
+
+    public static int[] version2Layer1 = {
+        1,
+        32,
+        48,
+        56,
+        64,
+        80,
+        96,
+        112,
+        128,
+        144,
+        160,
+        176,
+        192,
+        224,
+        256,
+        -1        
+    };
+
+    public static int[] version2RemainingLayers = {
+        1,
+        8,
+        16,
+        24,
+        32,
+        40,
+        48,
+        56,
+        64,
+        80,
+        96,
+        112,
+        128,
+        144,
+        160,
+        -1
+    };
 }
