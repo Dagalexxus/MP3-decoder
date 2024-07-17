@@ -1,6 +1,6 @@
 namespace MusicPlayer;
 
-class Mp3Frame(){
+public class Mp3Frame{
     public Boolean syncwordFound{get; set;}
     public string MpegVersion{get; set;}
     public string layer{get; set;}
@@ -14,5 +14,11 @@ class Mp3Frame(){
     public Boolean original{get; set;}
     public string emphasis{get; set;}
 
-
+    public Mp3Frame(){
+        this.MpegVersion = "";
+        this.channelMode = "";
+        this.layer = "";
+        this.modeExtension = "";
+        this.emphasis = "";
+    }
 }
