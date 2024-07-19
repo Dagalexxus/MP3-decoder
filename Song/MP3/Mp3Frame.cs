@@ -25,6 +25,6 @@ public class Mp3Frame{
 
     public override string ToString()
     {
-        return $"MPEG Version: {MpegVersion}, Layer Version: {layer}, Protection: {prot}, Bit Rate: {bitRate}, Frequency: {samplingRateFrequency}";
+        return $"MPEG Version: {MpegVersion}, Layer Version: {layer}, Protection: {prot}, Bit Rate: {bitRate}, Frequency: {samplingRateFrequency}, Padded: {padded}, Private used: {privateUsed}, Channel Mode: {channelMode}, Mode Extension: {modeExtension}, Copyright: {copyright}, Original: {original}, Emphasis: {emphasis}";
     }
 }

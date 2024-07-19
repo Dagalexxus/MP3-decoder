@@ -156,6 +156,116 @@ class Program
                         break;
                 }
 
+                // find the padding
+                shifted = (by[index] >> 1) & 0x1;
+
+                if (shifted == 1){
+                    currentFrame.padded = true;
+                }
+                else {
+                    currentFrame.padded = false;
+                }
+
+                // find whether the private bit is used
+                shifted = (by[index]) & 0x1;
+                if (shifted == 1){
+                    currentFrame.privateUsed = true;
+                }
+                else {
+                    currentFrame.privateUsed = false;
+                }
+
+                index += 1;
+
+                // find the channel mode
+
+                shifted = (by[index] >> 6) & 3;
+
+                if (shifted == 0){
+                    currentFrame.channelMode = "Stereo";
+                }
+                else if (shifted == 1){
+                    currentFrame.channelMode = "Joint Stereo";
+                }
+                else if (shifted == 2){
+                    currentFrame.channelMode = "Dual Channel";
+                }
+                else {
+                    currentFrame.channelMode = "Single Channel";
+                }
+
+                // find the Mode Extension. Only relevant if Joint Stereo
+                shifted = (by[index] >> 4) & 3;
+                if (currentFrame.channelMode == "Joint Stereo"){
+                    if (currentFrame.layer == "Layer 1" || currentFrame.layer == "Layer 2"){
+                        // indicates which bands are used from x - 31
+                        if (shifted == 0){
+                            currentFrame.modeExtension = "4";
+                        }
+                        else if (shifted == 1){
+                            currentFrame.modeExtension = "8";
+                        }
+                        else if (shifted == 2){
+                            currentFrame.modeExtension = "12";
+                        }
+                        else {
+                            currentFrame.modeExtension = "16";
+                        }
+                    }
+                    else {
+                        // layer 3 has different settings than other layers
+                        if (shifted == 0){
+                            currentFrame.modeExtension = "None";
+                        }
+                        else if (shifted == 1){
+                            currentFrame.modeExtension = "Intensity Stereo";
+                        }
+                        else if (shifted == 2){
+                            currentFrame.modeExtension = "MS Stereo";
+                        }
+                        else {
+                            currentFrame.modeExtension = "Both";
+                        }
+                    }
+                }
+                else {
+                    currentFrame.modeExtension = "Not in use";
+                }
+
+                // find copyright bit
+                shifted = (by[index] >> 3) & 1;
+                if (shifted == 1){
+                    currentFrame.copyright = true;
+                }
+                else {
+                    currentFrame.copyright = false;
+                }
+
+                // find the original bit
+                shifted = (by[index] >> 2) & 1;
+                if (shifted == 1){
+                    currentFrame.original = true;
+                }
+                else {
+                    currentFrame.original = false;
+                }
+
+                // determine the emphasis
+                shifted = by[index] & 3;
+                if (shifted == 0){
+                    currentFrame.emphasis = "None";
+                }
+                else if (shifted == 1){
+                    currentFrame.emphasis = "50/15 ms";
+                }
+                else if (shifted == 2){
+                    currentFrame.emphasis = "reserved";
+                }
+                else {
+                    currentFrame.emphasis = "CCIT J.17";
+                }
+
+
                 mp3Frames.Add(currentFrame);
             }
             else 
@@ -184,6 +294,6 @@ class Program
         }
 
         Console.WriteLine(mp3Frames[0].ToString());
-        Console.WriteLine(by[2]);
+        Console.WriteLine(by[3]);
     }
 }
