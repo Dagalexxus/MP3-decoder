@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
 
 namespace MusicPlayer;
 
@@ -97,7 +98,63 @@ class Program
                     currentFrame.prot = false;
                 }
 
+                // move index along as we are now entering the third byte of the header
+                index += 1;
+
+                // check for the bit rate
+                int[] bitRate;
+
+                string versionLayerCombination = $"{currentFrame.MpegVersion} {currentFrame.layer}";
+
+                switch(versionLayerCombination){
+                    case "MPEG Version 1 Layer 1":
+                        bitRate = Utils.version1Layer1;
+                        break;
+                    case "MPEG Version 1 Layer 2":
+                        bitRate = Utils.version1Layer2;
+                        break;
+                    case "MPEG Version 1 Layer 3":
+                        bitRate = Utils.version1Layer3;
+                        break;
+                    case "MPEG Version 2 Layer 1":
+                    case "MPEG Version 2.5 Layer 1":
+                        bitRate = Utils.version2Layer1;
+                        break;
+                    case "MPEG Version 2 Layer 2":
+                    case "MPEG Version 2.5 Layer 2":
+                    case "MPEG Version 2 Layer 3":
+                    case "MPEG Version 2.5 Layer 3":
+                        bitRate = Utils.version2RemainingLayers;
+                        break;
+                    default:
+                        bitRate = [-1];
+                        break;    
+                }
+
+                if (bitRate[0] == -1){
+                    break;
+                }
                 
+                shifted = (by[index] >> 4) & 0xF;
+                Console.WriteLine(shifted);
+                currentFrame.bitRate = bitRate[shifted];
+
+                // find the sampling rate 
+                shifted = (by[index] >> 2) & 0x3;
+
+                switch (currentFrame.MpegVersion){
+                    case "MPEG Version 1":
+                        currentFrame.samplingRateFrequency = Utils.version1[shifted];
+                        break;
+                    case "MPEG Version 2":
+                        currentFrame.samplingRateFrequency = Utils.version2[shifted];
+                        break;
+                    case "MPEG Version 2.5":
+                        currentFrame.samplingRateFrequency = Utils.version2dot5[shifted];
+                        break;
+                    default:
+                        break;
+                }
 
                 mp3Frames.Add(currentFrame);
             }
@@ -127,6 +184,6 @@ class Program
         }
 
         Console.WriteLine(mp3Frames[0].ToString());
-        Console.WriteLine(by[1]);
+        Console.WriteLine(by[2]);
     }
 }

@@ -5,6 +5,7 @@ public class Mp3Frame{
     public string MpegVersion{get; set;}
     public string layer{get; set;}
     public Boolean prot{get; set;}
+    public int bitRate{get; set;}
     public int samplingRateFrequency{get ; set;}
     public Boolean padded{get; set;}
     public Boolean privateUsed{get; set;}
@@ -24,6 +25,6 @@ public class Mp3Frame{
 
     public override string ToString()
     {
-        return $"MPEG Version: {MpegVersion}, Layer Version: {layer}, Protection: {prot}";
+        return $"MPEG Version: {MpegVersion}, Layer Version: {layer}, Protection: {prot}, Bit Rate: {bitRate}, Frequency: {samplingRateFrequency}";
     }
 }
