@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
 
 namespace MusicPlayer;
 
@@ -22,32 +23,23 @@ class Program
         // check for the ID3v2 version that starts at the beginning
         // ONLY checking right now. Later implement how to handle
         if(by[0] == 'I' && by[1] == 'D' && by[2] == '3'){
-            Console.WriteLine((char) by[0]);
-            Console.WriteLine((char) by[1]);
-            Console.WriteLine((char) by[2]);
-            Console.WriteLine("Tag found");
+            Console.WriteLine("Start of the file Tag found");
         }
         else {
-            Console.WriteLine(by[0]);
-            Console.WriteLine(by[1]);
-            Console.WriteLine(by[2]);
-            Console.WriteLine("Tag not found");
+
+            Console.WriteLine("Start of the file tag not found");
         }
 
         //check for the ID3v1 that is at the end of it
         int positionOfTag = by.Length - 128 - 1;
         if(by[positionOfTag] == 'T' && by[positionOfTag + 1] == 'A' && by[positionOfTag + 2] == 'G'){
-            Console.WriteLine((char) by[positionOfTag]);
-            Console.WriteLine((char) by[positionOfTag + 1]);
-            Console.WriteLine((char) by[positionOfTag + 2]);
-            Console.WriteLine("Tag found");
+            Console.WriteLine("End of the file tag found");
         }
         else{
-            Console.WriteLine((char) by[positionOfTag]);
-            Console.WriteLine((char) by[positionOfTag + 1]);
-            Console.WriteLine((char) by[positionOfTag + 2]);
-            Console.WriteLine("Tag not found");
+            Console.WriteLine("End of the file tag not found");
         }
+
+        Dictionary<int, int> frameSizes = new Dictionary<int, int>();
 
 
         while(index < by.Length){
@@ -131,12 +123,16 @@ class Program
                         break;    
                 }
 
-                if (bitRate[0] == -1){
-                    break;
-                }
                 
                 shifted = (by[index] >> 4) & 0xF;
-                Console.WriteLine(shifted);
+                /**
+                Console.WriteLine(index);
+                int count = mp3Frames.Count - 1;
+                if (mp3Frames.Count > 0){
+                    Console.WriteLine(mp3Frames.Count + ": " + mp3Frames[count].ToString());
+                };
+                **/
+
                 currentFrame.bitRate = bitRate[shifted];
 
                 // find the sampling rate 
@@ -265,8 +261,23 @@ class Program
                     currentFrame.emphasis = "CCIT J.17";
                 }
 
+                // reset if bad header
+                if (currentFrame.bitRate == -1 || currentFrame.samplingRateFrequency == -1){
+                    index -= 2;
+                    continue;
+                }
+
+                currentFrame.calculateSize();
 
                 mp3Frames.Add(currentFrame);
+
+                index += currentFrame.frameSize - 4;
+                if (frameSizes.ContainsKey(currentFrame.frameSize)){
+                    frameSizes[currentFrame.frameSize] += 1;
+                }
+                else {
+                    frameSizes[currentFrame.frameSize] = 1;
+                }
             }
             else 
             {
@@ -281,10 +292,12 @@ class Program
             {"MPEG Version 1", 0}
         };
 
-        Console.WriteLine(mp3Frames[0].MpegVersion);
-
+        int counter = 0;
         for (int idx = 0; idx < mp3Frames.Count; idx++){
             differentMPEGVersion[mp3Frames[idx].MpegVersion] += 1;
+            if (mp3Frames[idx].samplingRateFrequency == 44100){
+                counter++;
+            }
         }
         var keys = differentMPEGVersion.Keys.ToArray();
         var vals = differentMPEGVersion.Values.ToArray();
@@ -292,8 +305,14 @@ class Program
         for (int idx = 0; idx < 4; idx++){
             Console.WriteLine($"Version: {keys[idx]} has {vals[idx]} occurences");
         }
+        Console.WriteLine($"The sample frequency is 44,100 {counter} times");
 
-        Console.WriteLine(mp3Frames[0].ToString());
-        Console.WriteLine(by[3]);
+        int[] key = frameSizes.Keys.ToArray();
+        vals = frameSizes.Values.ToArray();
+
+        for (int idx = 0; idx < key.Length; idx++){
+            Console.WriteLine($"Framesize: {key[idx]} has {vals[idx]} occurences");
+        }
+
     }
 }
